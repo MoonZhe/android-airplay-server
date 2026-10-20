@@ -1,0 +1,13 @@
+--- a/lib/http_handlers.h
++++ b/lib/http_handlers.h
+@@ -1034,7 +1034,9 @@
+     }
+     airplay_video_t *airplay_video = (airplay_video_t *) hls_get_current_video(raop);
+     assert(airplay_video);
+-    if (!strcmp(url, "/master.m3u8")){
++    /* any query string: WebKit senders (Safari, Chrome on iOS) ask for "/master.m3u8?id=1" */
++    if (!strncmp(url, "/master.m3u8", strlen("/master.m3u8")) &&
++        (url[strlen("/master.m3u8")] == '\0' || url[strlen("/master.m3u8")] == '?')) {
+         char * master_playlist  = get_master_playlist(airplay_video);
+         if (master_playlist) {
+             *response_data = master_playlist;
